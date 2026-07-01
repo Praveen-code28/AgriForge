@@ -216,3 +216,55 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# ===========================
+# AgriForge Project
+# ===========================
+
+# VS Code
+.vscode/
+
+# JetBrains IDEs
+.idea/
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# ML Models
+*.pt
+*.pth
+*.onnx
+*.h5
+*.ckpt
+*.joblib
+*.pkl
+
+# Datasets
+datasets/raw/
+datasets/processed/
+
+# Large files
+*.zip
+*.tar
+*.gz
+
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Ollama cache (optional)
+.ollama/
+
+# Local databases
+*.db
+
+# Temporary files
+tmp/
+temp/
