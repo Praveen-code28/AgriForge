@@ -1,21 +1,23 @@
 import os
 import torch
-import torch.nn.functional as F
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 from tqdm import tqdm
-from PIL import Image
-import numpy as np
 
 import config
 from transforms import get_val_transforms
 from dataset import get_loaders
 from model import build_model
+from utils import set_seed
 
-def verify_misclassifications():
+def evaluate():
+    set_seed()
     device = torch.device(config.DEVICE)
     val_transform = get_val_transforms()
     
-    # Get the dataset (assuming dataset returns image paths)
-    _, val_loader, dataset = get_loaders(
+    # Use *extra to absorb any extra items returned by get_loaders
+    train_loader, val_loader, *extra = get_loaders(
         config.DATASET_PATH, 
         None, 
         val_transform, 
@@ -24,50 +26,56 @@ def verify_misclassifications():
 
     checkpoint_path = os.path.join(config.CHECKPOINT_DIR, config.CHECKPOINT_NAME)
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    
     classes = checkpoint['classes']
     
     model = build_model().to(device)
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
 
-    # Create a folder to save the wrong images
-    save_dir = "misclassified_images"
-    os.makedirs(save_dir, exist_ok=True)
+    all_preds = []
+    all_labels = []
 
     with torch.no_grad():
-        for batch_idx, (images, labels) in enumerate(tqdm(val_loader, desc="Verifying")):
+        for images, labels in tqdm(val_loader, desc="Evaluating"):
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
-            
-            # Get confidence scores using Softmax
-            probabilities = F.softmax(outputs, dim=1)
-            confidences, preds = torch.max(probabilities, 1)
-            
-            for i in range(len(images)):
-                true_label = labels[i].item()
-                pred_label = preds[i].item()
-                confidence = confidences[i].item()
-                
-                # If the model got it wrong
-                if true_label != pred_label:
-                    true_class = classes[true_label]
-                    pred_class = classes[pred_label]
-                    
-                    print(f"\n❌ Wrong Prediction!")
-                    print(f"   True: {true_class} | Predicted: {pred_class} | Confidence: {confidence*100:.2f}%")
-                    
-                    # If you want to save the actual image to look at it:
-                    # try:
-                    #     # This depends on how your dataset is structured. 
-                    #     # Standard PyTorch datasets allow you to access the original image via index.
-                    #     global_idx = batch_idx * config.BATCH_SIZE + i
-                    #     original_img, _ = dataset[global_idx] 
-                    #     if isinstance(original_img, torch.Tensor):
-                    #         original_img = original_img.permute(1, 2, 0).numpy()
-                    #     img = Image.fromarray((original_img * 255).astype(np.uint8))
-                    #     img.save(os.path.join(save_dir, f"true_{true_class}_pred_{pred_class}.png"))
-                    # except Exception as e:
-                    #     pass
+            _, preds = outputs.max(1)
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+
+    # Generate the classification report as a string
+    report = classification_report(all_labels, all_preds, target_names=classes)
+    
+    print("\n📊 Classification Report:")
+    print(report)
+    
+    # NEW: Save the report to a text file so you can read it without PowerShell scrambling it!
+    with open("classification_report.txt", "w") as f:
+        f.write(report)
+    print("✅ Classification report saved as 'classification_report.txt'")
+
+    cm = confusion_matrix(all_labels, all_preds, normalize='true')
+    plt.figure(figsize=(14, 12))
+    sns.heatmap(
+        cm, 
+        annot=True, 
+        fmt=".2f", 
+        xticklabels=classes, 
+        yticklabels=classes, 
+        cmap='Blues'
+    )
+    plt.xticks(rotation=45, ha='right')
+    plt.yticks(rotation=0)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix - AgriForge Crop Health')
+    plt.tight_layout()
+    
+    # FIX: bbox_inches='tight' forces matplotlib to expand the image borders 
+    # so labels like "potato_early_blight" don't get cut off on the edges.
+    plt.savefig('confusion_matrix.png', bbox_inches='tight')
+    print("✅ Confusion matrix saved as confusion_matrix.png")
 
 if __name__ == "__main__":
-    verify_misclassifications()
+    evaluate()
