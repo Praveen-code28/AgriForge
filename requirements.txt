@@ -6,6 +6,8 @@ pandas
 scikit-learn
 matplotlib
 seaborn
+Pillow
+opencv-python
 
 python-multipart
 pydantic

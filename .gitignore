@@ -268,3 +268,40 @@ docker-compose.override.yml
 # Temporary files
 tmp/
 temp/
+
+# ======================
+# Datasets
+# ======================
+
+# Main dataset
+# Datasets
+backend/data/
+datasets/raw/
+datasets/processed/
+# Backend training dataset
+backend/data/
+backend/data/crop_disease_dataset/
+
+# Virtual Environment
+venv/
+.venv/
+
+# Model checkpoints
+checkpoints/
+*.pt
+*.pth
+*.onnx
+*.h5
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Environment
+.env
