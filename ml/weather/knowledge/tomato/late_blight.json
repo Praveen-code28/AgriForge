@@ -1,0 +1,45 @@
+{
+  "crop": "tomato",
+  "disease": "late_blight",
+  "favorable_weather": {
+    "temperature_min": 18,
+    "temperature_max": 24,
+    "humidity_min": 85,
+    "rainfall_min": 5,        // mm in last 24h
+    "leaf_wetness_hours": 10  // minimum hours of leaf wetness
+  },
+  "unfavorable_weather": {
+    "temperature_above": 30,
+    "humidity_below": 60
+  },
+  "disease_spread": {
+    "generation_time_hours": 48,   // under favorable conditions
+    "severity_scale": {
+      "low": {"rainfall": "<5", "humidity": "<80"},
+      "moderate": {"rainfall": "5-15", "humidity": "80-90"},
+      "high": {"rainfall": ">15", "humidity": ">90"}
+    },
+    "yield_loss_per_day_delay": 5  // percent loss per day of delay
+  },
+  "spray_rules": {
+    "min_temperature": 10,
+    "max_temperature": 30,
+    "max_wind_speed": 15,       // km/h
+    "rain_free_hours_after": 4,
+    "optimal_humidity_range": [40, 70],
+    "optimal_times": ["early_morning", "late_evening"]
+  },
+  "prevention": {
+    "fungicide_classes": ["mancozeb", "copper"],
+    "application_interval_days": 7,
+    "max_applications_per_season": 4
+  },
+  "treatment_window": {
+    "ideal_conditions": {
+      "temperature": [15, 25],
+      "humidity": [50, 70],
+      "wind": "<10",
+      "rain_prob": "<30"
+    }
+  }
+}
