@@ -1,45 +1,78 @@
 {
-  "crop": "tomato",
-  "disease": "late_blight",
-  "favorable_weather": {
-    "temperature_min": 18,
-    "temperature_max": 24,
-    "humidity_min": 85,
-    "rainfall_min": 5,        // mm in last 24h
-    "leaf_wetness_hours": 10  // minimum hours of leaf wetness
-  },
-  "unfavorable_weather": {
-    "temperature_above": 30,
-    "humidity_below": 60
-  },
-  "disease_spread": {
-    "generation_time_hours": 48,   // under favorable conditions
-    "severity_scale": {
-      "low": {"rainfall": "<5", "humidity": "<80"},
-      "moderate": {"rainfall": "5-15", "humidity": "80-90"},
-      "high": {"rainfall": ">15", "humidity": ">90"}
+  "disease_id": "tomato_late_blight",
+  "crop": "Tomato",
+  "disease_name": "Late Blight",
+  "scientific_cause": "Phytophthora infestans",
+  "disease_type": "Oomycete",
+  "description": "Late blight is a destructive disease of tomato capable of spreading rapidly during cool, wet, and highly humid weather.",
+  "symptoms": [
+    "Large irregular water-soaked or pale green leaf lesions",
+    "Lesions rapidly turn brown or black",
+    "White pathogen growth may appear around lesion margins under humid conditions",
+    "Dark lesions may develop on stems",
+    "Fruit may develop firm greasy-looking brown lesions",
+    "Severe infections can rapidly kill foliage"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 10,
+      "max": 24
     },
-    "yield_loss_per_day_delay": 5  // percent loss per day of delay
+    "humidity": "Very high",
+    "leaf_wetness": "Prolonged wetness creates high disease risk",
+    "rainfall": "Frequent rain strongly favors outbreaks",
+    "additional_conditions": "Cool, moist, cloudy weather can support rapid disease development"
   },
-  "spray_rules": {
-    "min_temperature": 10,
-    "max_temperature": 30,
-    "max_wind_speed": 15,       // km/h
-    "rain_free_hours_after": 4,
-    "optimal_humidity_range": [40, 70],
-    "optimal_times": ["early_morning", "late_evening"]
-  },
-  "prevention": {
-    "fungicide_classes": ["mancozeb", "copper"],
-    "application_interval_days": 7,
-    "max_applications_per_season": 4
-  },
-  "treatment_window": {
-    "ideal_conditions": {
-      "temperature": [15, 25],
-      "humidity": [50, 70],
-      "wind": "<10",
-      "rain_prob": "<30"
+  "spread": [
+    "Airborne spores",
+    "Wind-driven rain",
+    "Nearby infected tomato or potato plants",
+    "Volunteer host plants"
+  ],
+  "risk_factors": [
+    "Cool wet weather",
+    "High humidity",
+    "Prolonged foliage wetness",
+    "Nearby infected potato or tomato crops"
+  ],
+  "prevention": [
+    "Use healthy transplants",
+    "Monitor crops frequently during high-risk weather",
+    "Remove volunteer host plants",
+    "Reduce prolonged foliage wetness",
+    "Use resistant cultivars where locally appropriate"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Treat suspected infection as urgent",
+      "Inspect surrounding tomato and potato plants",
+      "Avoid moving infected plant material",
+      "Seek expert confirmation when possible"
+    ],
+    "cultural_control": [
+      "Remove major sources of infection",
+      "Improve airflow",
+      "Manage irrigation carefully"
+    ],
+    "biological_control": [
+      "Biological fungicides may provide supplementary preventive protection where registered but may be insufficient during severe outbreaks"
+    ],
+    "chemical_control": {
+      "recommended": "Use locally registered late-blight fungicides according to disease forecasts and local agricultural recommendations.",
+      "active_ingredients_examples": [
+        "Mancozeb",
+        "Chlorothalonil",
+        "Mandipropamid",
+        "Cyazofamid"
+      ],
+      "warning": "Resistance management is essential. Product availability and registration vary by region."
     }
-  }
+  },
+  "severity_guidance": {
+    "low": "Any credible suspected infection should trigger immediate monitoring and confirmation.",
+    "moderate": "Multiple lesions or plants affected require prompt integrated management.",
+    "high": "Rapidly spreading foliage or stem infection is an urgent outbreak requiring expert guidance."
+  },
+  "farmer_advice": "Late blight can spread extremely quickly. AgriForge should generate a high-priority alert when visual symptoms coincide with cool, wet, highly humid weather.",
+  "disclaimer": "AI predictions alone should not be used as definitive confirmation of late blight."
 }

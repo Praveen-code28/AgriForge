@@ -1,10 +1,12 @@
+from typing import Any, Dict
+
+
 class RecoveryProbability:
     def __init__(self, knowledge: Dict[str, Any]):
         self.knowledge = knowledge
 
     def estimate(self, confidence: float, weather_risk: int, spray_today: bool) -> Dict:
-        # Base recovery: high confidence reduces uncertainty, low weather risk helps, early spray helps.
-        base = 70  # default
+        base = 70
         if confidence > 0.9:
             base += 10
         elif confidence > 0.7:

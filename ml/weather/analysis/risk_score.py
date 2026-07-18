@@ -1,3 +1,9 @@
+from typing import Any, Dict, List
+
+from ..current_weather import CurrentWeather
+from ..weather_client import ForecastPeriod
+
+
 class RiskScoreCalculator:
     def __init__(self, knowledge: Dict[str, Any]):
         self.knowledge = knowledge

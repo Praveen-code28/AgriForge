@@ -1,0 +1,75 @@
+{
+  "disease_id": "tomato_septoria_leaf_spot",
+  "crop": "Tomato",
+  "disease_name": "Septoria Leaf Spot",
+  "scientific_cause": "Septoria lycopersici",
+  "disease_type": "Fungal",
+  "description": "Septoria leaf spot is a fungal disease that primarily affects tomato foliage and can cause severe defoliation under warm, humid, and wet conditions.",
+  "symptoms": [
+    "Numerous small circular leaf spots",
+    "Spots typically have gray or tan centers with darker margins",
+    "Tiny black fruiting bodies may be visible in lesion centers",
+    "Symptoms usually begin on lower leaves",
+    "Severe infection causes yellowing and defoliation"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 15,
+      "max": 27
+    },
+    "humidity": "High",
+    "leaf_wetness": "Prolonged wetness favors infection",
+    "rainfall": "Rain splash promotes spread",
+    "additional_conditions": "Warm humid conditions favor repeated infection cycles"
+  },
+  "spread": [
+    "Rain splash",
+    "Overhead irrigation",
+    "Infected crop debris",
+    "Contaminated equipment"
+  ],
+  "risk_factors": [
+    "High humidity",
+    "Frequent rain",
+    "Prolonged leaf wetness",
+    "Infected plant debris"
+  ],
+  "prevention": [
+    "Rotate crops",
+    "Remove infected plant debris",
+    "Reduce leaf wetness",
+    "Improve airflow",
+    "Avoid unnecessary overhead irrigation"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Remove heavily infected lower leaves where practical",
+      "Reduce foliage wetness",
+      "Monitor nearby plants"
+    ],
+    "cultural_control": [
+      "Use crop rotation",
+      "Improve spacing",
+      "Manage crop debris"
+    ],
+    "biological_control": [
+      "Use registered biological fungicides where locally available"
+    ],
+    "chemical_control": {
+      "recommended": "Protective fungicides may be used where disease pressure warrants treatment.",
+      "active_ingredients_examples": [
+        "Chlorothalonil",
+        "Mancozeb",
+        "Copper-based fungicides"
+      ],
+      "warning": "Follow local registration, product labels, and resistance-management recommendations."
+    }
+  },
+  "severity_guidance": {
+    "low": "Few spots on lower leaves. Remove affected tissue where practical and monitor.",
+    "moderate": "Increasing lower-canopy infection. Improve cultural controls and consider registered treatment.",
+    "high": "Severe defoliation or rapid spread. Implement integrated disease management."
+  },
+  "farmer_advice": "Septoria often begins on lower leaves, so early scouting of the lower canopy is important.",
+  "disclaimer": "Septoria can resemble bacterial spot and other fungal leaf diseases. Confirm uncertain diagnoses."
+}

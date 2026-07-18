@@ -1,0 +1,79 @@
+{
+  "disease_id": "tomato_bacterial_spot",
+  "crop": "Tomato",
+  "disease_name": "Bacterial Spot",
+  "scientific_cause": "Xanthomonas species complex",
+  "disease_type": "Bacterial",
+  "description": "Bacterial spot is an important disease of tomato that can affect leaves, stems, and fruits. Warm, wet weather favors disease development and spread.",
+  "symptoms": [
+    "Small dark or water-soaked spots appear on leaves",
+    "Leaf spots may become brown or black and can be surrounded by yellow tissue",
+    "Severe infection can cause leaf yellowing and defoliation",
+    "Small raised or scabby lesions may develop on fruits",
+    "Fruit lesions can become rough and corky",
+    "Stem and petiole lesions may occur"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 24,
+      "max": 30
+    },
+    "humidity": "High",
+    "leaf_wetness": "Prolonged wetness strongly favors infection",
+    "rainfall": "Frequent rain and splashing water promote spread",
+    "additional_conditions": "Warm temperatures combined with wet foliage create high-risk conditions"
+  },
+  "spread": [
+    "Contaminated seed and transplants can introduce the pathogen",
+    "Rain splash spreads bacteria between plants",
+    "Overhead irrigation can contribute to spread",
+    "Workers and equipment can mechanically spread bacteria when plants are wet"
+  ],
+  "risk_factors": [
+    "Warm wet weather",
+    "Frequent rainfall",
+    "Overhead irrigation",
+    "Contaminated seed or transplants",
+    "Working among wet plants"
+  ],
+  "prevention": [
+    "Use pathogen-free seed and healthy transplants",
+    "Rotate away from tomato and pepper where appropriate",
+    "Avoid unnecessary overhead irrigation",
+    "Avoid handling plants when foliage is wet",
+    "Sanitize tools and equipment where practical",
+    "Remove volunteer host plants"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Inspect nearby plants for symptoms",
+      "Avoid handling wet infected plants",
+      "Remove severely infected plants in small plantings where practical",
+      "Reduce splash dispersal"
+    ],
+    "cultural_control": [
+      "Use drip or soil-level irrigation where practical",
+      "Improve airflow",
+      "Practice crop rotation",
+      "Maintain field sanitation"
+    ],
+    "biological_control": [
+      "Use locally registered biological bactericides where available"
+    ],
+    "chemical_control": {
+      "recommended": "Copper-based bactericides or other locally registered products may help suppress bacterial spot but may not eliminate established infections.",
+      "active_ingredients_examples": [
+        "Copper hydroxide",
+        "Copper oxychloride"
+      ],
+      "warning": "Copper resistance can occur in Xanthomonas populations. Follow local agricultural recommendations and product labels and avoid unnecessary repeated applications."
+    }
+  },
+  "severity_guidance": {
+    "low": "A few localized spots. Monitor closely and reduce conditions that promote splash dispersal.",
+    "moderate": "Multiple leaves or plants affected. Strengthen sanitation and locally recommended management.",
+    "high": "Widespread foliage or fruit infection. Seek agricultural guidance and implement integrated bacterial disease management."
+  },
+  "farmer_advice": "Prevention is especially important because bacterial diseases are difficult to cure after infection. Start with clean seed or transplants and minimize water splash.",
+  "disclaimer": "AI identification is not definitive. Bacterial spot can resemble other tomato leaf diseases, including early blight, Septoria leaf spot, and target spot."
+}

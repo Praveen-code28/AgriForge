@@ -1,3 +1,6 @@
+from typing import Any, Dict
+
+
 class ProgressionPredictor:
     def __init__(self, knowledge: Dict[str, Any]):
         self.knowledge = knowledge

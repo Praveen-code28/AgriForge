@@ -1,0 +1,73 @@
+{
+  "disease_id": "tomato_leaf_mold",
+  "crop": "Tomato",
+  "disease_name": "Leaf Mold",
+  "scientific_cause": "Passalora fulva",
+  "disease_type": "Fungal",
+  "description": "Tomato leaf mold is a fungal disease particularly important in greenhouses and protected cultivation where humidity remains high.",
+  "symptoms": [
+    "Pale green or yellow spots develop on upper leaf surfaces",
+    "Olive-green to brown velvety fungal growth develops on leaf undersides",
+    "Affected leaves may curl, dry, and die",
+    "Severe infection can reduce photosynthesis and plant vigor"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 18,
+      "max": 26
+    },
+    "humidity": "Very high",
+    "leaf_wetness": "High humidity is particularly important",
+    "rainfall": "Indirectly relevant in protected cultivation",
+    "additional_conditions": "Poor ventilation and dense plant canopies favor disease"
+  },
+  "spread": [
+    "Airborne spores",
+    "Contaminated tools",
+    "Plant debris",
+    "Movement of spores within greenhouse environments"
+  ],
+  "risk_factors": [
+    "High relative humidity",
+    "Poor greenhouse ventilation",
+    "Dense plant spacing",
+    "Wet foliage"
+  ],
+  "prevention": [
+    "Improve greenhouse ventilation",
+    "Reduce humidity",
+    "Provide adequate plant spacing",
+    "Remove infected plant debris",
+    "Use resistant cultivars where available"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Remove heavily infected leaves",
+      "Increase ventilation",
+      "Reduce greenhouse humidity"
+    ],
+    "cultural_control": [
+      "Improve airflow",
+      "Avoid excessive plant density",
+      "Sanitize the production area"
+    ],
+    "biological_control": [
+      "Use locally registered biological fungicides where appropriate"
+    ],
+    "chemical_control": {
+      "recommended": "Registered fungicides may be used when environmental management alone does not provide adequate control.",
+      "active_ingredients_examples": [
+        "Copper-based fungicides",
+        "Chlorothalonil"
+      ],
+      "warning": "Verify local registration and greenhouse-use restrictions before application."
+    }
+  },
+  "severity_guidance": {
+    "low": "Localized symptoms. Reduce humidity and monitor.",
+    "moderate": "Multiple leaves affected. Remove infected tissue and improve ventilation.",
+    "high": "Widespread infection. Combine environmental control with locally recommended disease management."
+  },
+  "farmer_advice": "Humidity management and ventilation are among the most important controls for tomato leaf mold, especially in greenhouse cultivation.",
+  "disclaimer": "Confirm diagnosis when symptoms are unclear because several tomato diseases can cause yellow leaf spots."
+}

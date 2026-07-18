@@ -1,0 +1,75 @@
+{
+  "disease_id": "tomato_yellow_leaf_curl_virus",
+  "crop": "Tomato",
+  "disease_name": "Tomato Yellow Leaf Curl Virus",
+  "scientific_cause": "Tomato yellow leaf curl virus (TYLCV)",
+  "disease_type": "Viral",
+  "vector": "Whiteflies, primarily Bemisia tabaci",
+  "description": "Tomato yellow leaf curl virus is a serious viral disease transmitted primarily by whiteflies. Early infection can severely stunt plants and greatly reduce fruit production.",
+  "symptoms": [
+    "Upward curling of leaf margins",
+    "Yellowing between or along leaf margins",
+    "Leaves may become smaller than normal",
+    "Plant growth becomes stunted",
+    "Shortened internodes may produce a bushy appearance",
+    "Flower drop may occur",
+    "Fruit production can be severely reduced"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 20,
+      "max": 35
+    },
+    "humidity": "Indirect effect through whitefly population dynamics",
+    "leaf_wetness": "Not required for virus transmission",
+    "rainfall": "Not the primary driver",
+    "additional_conditions": "Conditions favoring whitefly populations increase virus transmission risk"
+  },
+  "spread": [
+    "Transmitted primarily by viruliferous whiteflies",
+    "Movement of infected plant material can introduce the virus",
+    "Infected host plants can serve as virus reservoirs"
+  ],
+  "risk_factors": [
+    "High whitefly populations",
+    "Presence of infected tomato plants",
+    "Susceptible cultivars",
+    "Nearby virus host plants"
+  ],
+  "prevention": [
+    "Use virus-free transplants",
+    "Use resistant or tolerant tomato varieties where available",
+    "Monitor and manage whitefly populations",
+    "Remove confirmed infected plants when appropriate",
+    "Manage weeds and alternative hosts according to local recommendations",
+    "Use physical exclusion methods such as insect-proof netting in suitable protected cultivation systems"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Inspect plants for whiteflies",
+      "Remove confirmed severely infected plants where appropriate",
+      "Manage whitefly populations to reduce further virus transmission"
+    ],
+    "cultural_control": [
+      "Use resistant varieties",
+      "Maintain field sanitation",
+      "Remove infection sources",
+      "Use physical barriers in protected cultivation where feasible"
+    ],
+    "biological_control": [
+      "Conserve or introduce appropriate whitefly natural enemies in suitable integrated pest management systems"
+    ],
+    "chemical_control": {
+      "recommended": "There is no chemical treatment that cures TYLCV-infected plants. Locally registered insecticides may be used as part of integrated whitefly management to reduce vector populations.",
+      "active_ingredients_examples": [],
+      "warning": "Do not present insecticide treatment as a cure for the virus. Whiteflies can develop insecticide resistance, so follow local integrated pest-management and resistance-management recommendations."
+    }
+  },
+  "severity_guidance": {
+    "low": "A suspected symptomatic plant should be inspected for whiteflies and monitored closely.",
+    "moderate": "Multiple symptomatic plants with whitefly activity indicate increased transmission risk.",
+    "high": "Widespread symptoms and high whitefly pressure can result in severe yield loss and require integrated vector and disease management."
+  },
+  "farmer_advice": "There is no cure for TYLCV after a plant becomes infected. Management should focus on resistant varieties, healthy transplants, early detection, removal of important infection sources, and integrated whitefly management.",
+  "disclaimer": "Leaf curling and yellowing can also result from nutrient deficiencies, herbicide injury, environmental stress, or other viruses. Confirm uncertain cases before taking major crop-management decisions."
+}

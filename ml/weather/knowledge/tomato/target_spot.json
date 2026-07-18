@@ -1,0 +1,73 @@
+{
+  "disease_id": "tomato_target_spot",
+  "crop": "Tomato",
+  "disease_name": "Target Spot",
+  "scientific_cause": "Corynespora cassiicola",
+  "disease_type": "Fungal",
+  "description": "Target spot is a fungal disease of tomato that affects leaves, stems, and fruits and can cause significant defoliation under warm and humid conditions.",
+  "symptoms": [
+    "Small brown leaf lesions that enlarge over time",
+    "Larger lesions may develop concentric rings",
+    "Lesions can merge and cause leaf blighting",
+    "Severe infection may cause premature defoliation",
+    "Fruit may develop sunken brown lesions"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 20,
+      "max": 30
+    },
+    "humidity": "High",
+    "leaf_wetness": "Prolonged leaf wetness favors infection",
+    "rainfall": "Frequent rain can promote disease development",
+    "additional_conditions": "Dense canopies with poor airflow increase risk"
+  },
+  "spread": [
+    "Airborne spores",
+    "Rain splash",
+    "Infected crop residues"
+  ],
+  "risk_factors": [
+    "Warm humid weather",
+    "Prolonged leaf wetness",
+    "Dense canopy",
+    "Poor air circulation"
+  ],
+  "prevention": [
+    "Improve plant spacing and airflow",
+    "Remove infected crop residues",
+    "Reduce prolonged foliage wetness",
+    "Monitor lower canopy leaves"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Remove heavily infected foliage where practical",
+      "Improve airflow",
+      "Reduce prolonged foliage wetness"
+    ],
+    "cultural_control": [
+      "Manage crop residues",
+      "Use adequate plant spacing",
+      "Improve canopy ventilation"
+    ],
+    "biological_control": [
+      "Use locally registered biological fungicides where available"
+    ],
+    "chemical_control": {
+      "recommended": "Use fungicides specifically registered for target spot on tomato when disease pressure warrants treatment.",
+      "active_ingredients_examples": [
+        "Azoxystrobin",
+        "Difenoconazole",
+        "Chlorothalonil"
+      ],
+      "warning": "Fungicide resistance management is important. Rotate locally approved modes of action and follow product labels."
+    }
+  },
+  "severity_guidance": {
+    "low": "Localized lesions. Monitor and improve canopy conditions.",
+    "moderate": "Multiple leaves affected. Strengthen cultural and registered disease-control measures.",
+    "high": "Widespread defoliation or fruit infection. Seek local agricultural guidance."
+  },
+  "farmer_advice": "Target spot may resemble early blight and other leaf spot diseases. Do not rely solely on target-like rings for diagnosis.",
+  "disclaimer": "Image-based diagnosis may confuse target spot with early blight, bacterial spot, or Septoria leaf spot. Expert or laboratory confirmation may be necessary."
+}

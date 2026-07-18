@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from ...forecast import ForecastPeriod
+from ...weather_client import ForecastPeriod
 
 class TreatmentWindowScorer:
     def __init__(self, knowledge: Dict[str, Any]):

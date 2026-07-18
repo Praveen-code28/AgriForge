@@ -1,0 +1,76 @@
+{
+  "disease_id": "tomato_spider_mites",
+  "crop": "Tomato",
+  "disease_name": "Spider Mite Infestation",
+  "scientific_cause": "Tetranychus species, commonly Tetranychus urticae",
+  "disease_type": "Pest",
+  "description": "Spider mites are tiny arachnid pests that feed on plant cells. Heavy infestations can cause extensive leaf damage, reduced photosynthesis, plant stress, and yield loss.",
+  "symptoms": [
+    "Fine yellow or white stippling on leaves",
+    "Leaves may develop a bronzed appearance",
+    "Fine webbing may appear on leaves and stems",
+    "Mites and eggs may be visible on leaf undersides with magnification",
+    "Severely damaged leaves may dry and fall"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 25,
+      "max": 35
+    },
+    "humidity": "Low to moderate humidity often favors rapid population growth",
+    "leaf_wetness": "Not required",
+    "rainfall": "Dry conditions generally favor outbreaks",
+    "additional_conditions": "Hot, dry, dusty conditions and plant stress can favor infestations"
+  },
+  "spread": [
+    "Movement between neighboring plants",
+    "Wind-assisted dispersal",
+    "Infested plant material"
+  ],
+  "risk_factors": [
+    "Hot dry weather",
+    "Drought-stressed plants",
+    "Dusty conditions",
+    "Disruption of natural predators",
+    "Inappropriate broad-spectrum insecticide use"
+  ],
+  "prevention": [
+    "Inspect leaf undersides regularly",
+    "Maintain appropriate irrigation",
+    "Reduce excessive dust where practical",
+    "Protect natural enemies",
+    "Avoid unnecessary broad-spectrum pesticide applications"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Confirm mites on leaf undersides",
+      "Remove heavily infested leaves in small plantings where practical",
+      "Use a strong water spray in suitable small-scale settings to dislodge mites"
+    ],
+    "cultural_control": [
+      "Reduce plant water stress",
+      "Manage dust",
+      "Avoid practices that destroy beneficial predators"
+    ],
+    "biological_control": [
+      "Conserve naturally occurring predatory mites",
+      "Consider commercially available predatory mites in suitable protected-crop systems"
+    ],
+    "chemical_control": {
+      "recommended": "Insecticidal soaps, horticultural oils, or locally registered miticides may be considered depending on crop conditions and infestation severity.",
+      "active_ingredients_examples": [
+        "Insecticidal soap",
+        "Horticultural oil",
+        "Abamectin"
+      ],
+      "warning": "Spider mites can develop resistance rapidly. Confirm local product registration and rotate approved modes of action when miticides are necessary. Oils and soaps can cause plant injury under unsuitable conditions, so follow product labels."
+    }
+  },
+  "severity_guidance": {
+    "low": "Small localized mite population with limited stippling. Monitor and conserve predators.",
+    "moderate": "Visible stippling across multiple leaves with increasing mite numbers. Apply integrated pest management.",
+    "high": "Heavy webbing, widespread bronzing, or leaf loss. Prompt control is required to prevent severe crop damage."
+  },
+  "farmer_advice": "Check the underside of leaves before confirming spider mites. Fine stippling combined with visible mites or webbing provides stronger diagnostic evidence than leaf discoloration alone.",
+  "disclaimer": "Spider mites are pests, not plant pathogens. Nutrient disorders and other sucking pests can cause similar discoloration."
+}

@@ -1,0 +1,20 @@
+{
+  "disease_id": "potato_healthy",
+  "crop": "Potato",
+  "disease_name": "Healthy",
+  "description": "Plant appears healthy with no visible disease symptoms.",
+  "favorable_conditions": {
+    "temperature_celsius": {"min": 12, "max": 28},
+    "humidity": "Moderate"
+  },
+  "prevention": [
+    "Maintain regular watering and balanced nutrition",
+    "Monitor plants weekly for early symptoms",
+    "Rotate crops to reduce disease pressure"
+  ],
+  "treatment": {
+    "immediate_actions": ["No treatment required"],
+    "cultural_control": ["Continue current good agronomic practices"]
+  },
+  "farmer_advice": "Keep monitoring your crop. Healthy plants can still develop disease under favorable conditions."
+}

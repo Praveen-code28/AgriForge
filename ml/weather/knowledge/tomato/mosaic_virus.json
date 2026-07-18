@@ -1,0 +1,70 @@
+{
+  "disease_id": "tomato_mosaic_virus",
+  "crop": "Tomato",
+  "disease_name": "Tomato Mosaic Virus",
+  "scientific_cause": "Tomato mosaic virus (ToMV)",
+  "disease_type": "Viral",
+  "description": "Tomato mosaic virus is a highly persistent viral disease that can cause mottled foliage, distorted growth, and reduced yield. There is no curative treatment for an infected plant.",
+  "symptoms": [
+    "Light and dark green mosaic pattern on leaves",
+    "Leaf mottling",
+    "Leaf distortion or curling",
+    "Stunted plant growth",
+    "Reduced fruit production",
+    "Uneven fruit ripening may occur"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": null,
+      "max": null
+    },
+    "humidity": "Not the primary driver of transmission",
+    "leaf_wetness": "Not required for mechanical transmission",
+    "rainfall": "Not a primary disease driver",
+    "additional_conditions": "Mechanical handling and contaminated tools are important transmission risks"
+  },
+  "spread": [
+    "Mechanical contact with infected plant sap",
+    "Contaminated hands",
+    "Contaminated tools and equipment",
+    "Infected plant material",
+    "Contaminated seed can contribute to introduction"
+  ],
+  "risk_factors": [
+    "Handling infected and healthy plants without sanitation",
+    "Contaminated pruning tools",
+    "Infected seedlings or plant material"
+  ],
+  "prevention": [
+    "Use virus-free seed and healthy transplants",
+    "Use resistant varieties where available",
+    "Sanitize tools and hands",
+    "Avoid unnecessary handling of suspected infected plants",
+    "Remove infected plants where appropriate"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Isolate or remove suspected infected plants",
+      "Disinfect tools used on affected plants",
+      "Avoid handling healthy plants immediately after infected plants"
+    ],
+    "cultural_control": [
+      "Maintain strict sanitation",
+      "Remove infected crop residues",
+      "Use resistant cultivars"
+    ],
+    "biological_control": [],
+    "chemical_control": {
+      "recommended": "No pesticide or fungicide can cure a plant infected with Tomato mosaic virus.",
+      "active_ingredients_examples": [],
+      "warning": "Do not recommend fungicides or antibiotics as a cure for viral infection."
+    }
+  },
+  "severity_guidance": {
+    "low": "Suspected isolated infection. Confirm diagnosis and prevent mechanical spread.",
+    "moderate": "Several symptomatic plants. Strengthen sanitation and remove confirmed infected plants where appropriate.",
+    "high": "Widespread infection. Focus on preventing further transmission and improving sanitation for future crops."
+  },
+  "farmer_advice": "There is no direct cure for Tomato mosaic virus. Management should focus on prevention, sanitation, resistant varieties, and removal of confirmed infection sources.",
+  "disclaimer": "Mosaic symptoms can be caused by multiple viruses or noninfectious disorders. Laboratory confirmation may be required."
+}

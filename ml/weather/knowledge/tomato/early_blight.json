@@ -1,0 +1,80 @@
+{
+  "disease_id": "tomato_early_blight",
+  "crop": "Tomato",
+  "disease_name": "Early Blight",
+  "scientific_cause": "Alternaria solani",
+  "disease_type": "Fungal",
+  "description": "Early blight is a common fungal disease of tomato that typically begins on older leaves and can progressively cause defoliation and fruit damage.",
+  "symptoms": [
+    "Brown spots usually begin on older lower leaves",
+    "Lesions often develop concentric target-like rings",
+    "Yellow tissue may surround lesions",
+    "Infected leaves may eventually die and fall",
+    "Dark stem lesions may occur",
+    "Fruit lesions may develop near the stem attachment"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 20,
+      "max": 30
+    },
+    "humidity": "Moderate to high",
+    "leaf_wetness": "Repeated leaf wetness favors infection",
+    "rainfall": "Rain can promote disease development and spore dispersal",
+    "additional_conditions": "Stressed and older plants are often more susceptible"
+  },
+  "spread": [
+    "Wind-dispersed spores",
+    "Rain splash",
+    "Infected crop debris",
+    "Volunteer tomato plants"
+  ],
+  "risk_factors": [
+    "Warm humid weather",
+    "Frequent leaf wetness",
+    "Plant stress",
+    "Infected crop residues",
+    "Continuous susceptible cropping"
+  ],
+  "prevention": [
+    "Rotate crops",
+    "Manage infected crop debris",
+    "Maintain adequate plant nutrition",
+    "Use healthy transplants",
+    "Improve airflow",
+    "Reduce unnecessary foliage wetness"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Remove heavily infected lower leaves where practical",
+      "Inspect nearby plants",
+      "Reduce prolonged foliage wetness"
+    ],
+    "cultural_control": [
+      "Maintain plant vigor",
+      "Use crop rotation",
+      "Control volunteer tomatoes",
+      "Improve air circulation"
+    ],
+    "biological_control": [
+      "Consider registered biological fungicides where locally available"
+    ],
+    "chemical_control": {
+      "recommended": "Preventive fungicide applications may be considered when disease pressure is high.",
+      "active_ingredients_examples": [
+        "Mancozeb",
+        "Chlorothalonil",
+        "Copper-based fungicides",
+        "Azoxystrobin"
+      ],
+      "warning": "Use only products registered for tomato early blight in your region and follow resistance-management and label requirements."
+    }
+  },
+  "severity_guidance": {
+    "low": "Few lesions on older leaves. Monitor and improve cultural management.",
+    "moderate": "Multiple leaves affected. Remove severely affected tissue where practical and consider registered controls.",
+    "high": "Extensive defoliation or rapid spread. Implement integrated disease management with local expert guidance."
+  },
+  "farmer_advice": "Regularly inspect lower and older leaves. Maintaining healthy plants, crop rotation, and reducing leaf wetness are important parts of early blight management.",
+  "disclaimer": "AI predictions should be confirmed when symptoms are unusual because early blight may resemble other tomato leaf diseases."
+}

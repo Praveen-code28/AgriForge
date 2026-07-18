@@ -1,0 +1,1 @@
+"""AgriForge FastAPI application."""

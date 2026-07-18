@@ -1,0 +1,83 @@
+{
+  "disease_id": "potato_early_blight",
+  "crop": "Potato",
+  "disease_name": "Early Blight",
+  "scientific_cause": "Alternaria solani",
+  "disease_type": "Fungal",
+  "description": "Early blight is a common fungal disease of potato that primarily affects older foliage and can also cause tuber lesions. Severe infection can lead to premature defoliation and reduced yield.",
+  "symptoms": [
+    "Small dark brown to black spots initially appear on older or lower leaves",
+    "Leaf lesions enlarge and often develop concentric rings that create a target-like appearance",
+    "Yellowing may develop around infected areas",
+    "Multiple lesions may merge and cause leaves to dry and die",
+    "Severe infection can cause premature defoliation",
+    "Tubers may develop dark, sunken, dry lesions with underlying corky tissue"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 20,
+      "max": 30
+    },
+    "humidity": "Moderate to high",
+    "leaf_wetness": "Repeated or prolonged leaf wetness favors infection",
+    "rainfall": "Rain and irrigation can support spore dispersal and infection",
+    "additional_conditions": "Disease is often more severe on stressed, nutrient-deficient, or senescing plants"
+  },
+  "spread": [
+    "Spores can spread through wind",
+    "Rain splash and irrigation water can disperse spores",
+    "The pathogen can survive in infected crop debris",
+    "Volunteer potato plants and infected plant material can contribute to inoculum"
+  ],
+  "risk_factors": [
+    "Warm and humid weather",
+    "Frequent leaf wetness",
+    "Plant stress",
+    "Poor soil fertility",
+    "Continuous potato or susceptible solanaceous cropping",
+    "Presence of infected crop debris"
+  ],
+  "prevention": [
+    "Use healthy and certified seed tubers",
+    "Rotate potatoes with non-host crops",
+    "Remove volunteer potato plants where practical",
+    "Manage infected crop residues appropriately",
+    "Maintain balanced soil fertility",
+    "Provide adequate irrigation without unnecessarily wetting foliage",
+    "Monitor older leaves regularly for early symptoms"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Inspect the crop to determine the extent of infection",
+      "Remove heavily infected foliage in small plantings where practical",
+      "Reduce prolonged leaf wetness",
+      "Avoid unnecessary overhead irrigation"
+    ],
+    "cultural_control": [
+      "Maintain adequate plant nutrition",
+      "Reduce plant stress through appropriate irrigation",
+      "Practice crop rotation",
+      "Manage volunteer potato plants and infected crop residues"
+    ],
+    "biological_control": [
+      "Consider locally registered biological fungicides labeled for Alternaria diseases where available"
+    ],
+    "chemical_control": {
+      "recommended": "Where disease risk warrants treatment, use fungicides specifically registered for early blight on potato and follow a resistance-management program.",
+      "active_ingredients_examples": [
+        "Mancozeb",
+        "Chlorothalonil",
+        "Azoxystrobin",
+        "Difenoconazole"
+      ],
+      "warning": "Availability, registration, resistance restrictions, dosage, application interval, and pre-harvest interval vary by location and product. Follow the current product label and local agricultural recommendations."
+    }
+  },
+  "severity_guidance": {
+    "low": "A small number of lesions on older leaves. Increase monitoring and improve cultural management.",
+    "moderate": "Multiple leaves affected with noticeable spread. Strengthen sanitation and consider locally registered disease-control measures.",
+    "high": "Extensive foliage infection or rapid defoliation. Seek local agricultural guidance and implement an integrated disease-management program."
+  },
+  "farmer_advice": "Keep potato plants healthy and monitor older leaves regularly. Early detection, crop rotation, good nutrition, and reducing prolonged leaf wetness can significantly improve disease management.",
+  "disclaimer": "AI-based disease identification is decision support and not a definitive diagnosis. Confirm uncertain or severe cases with a qualified agricultural professional or plant diagnostic service."
+}

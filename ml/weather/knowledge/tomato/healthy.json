@@ -1,0 +1,20 @@
+{
+  "disease_id": "tomato_healthy",
+  "crop": "Tomato",
+  "disease_name": "Healthy",
+  "description": "Plant appears healthy with no visible disease symptoms.",
+  "favorable_conditions": {
+    "temperature_celsius": {"min": 15, "max": 32},
+    "humidity": "Moderate"
+  },
+  "prevention": [
+    "Maintain regular watering and balanced nutrition",
+    "Monitor plants weekly for early symptoms",
+    "Ensure good airflow between plants"
+  ],
+  "treatment": {
+    "immediate_actions": ["No treatment required"],
+    "cultural_control": ["Continue current good agronomic practices"]
+  },
+  "farmer_advice": "Keep monitoring your crop. Healthy plants can still develop disease under favorable conditions."
+}

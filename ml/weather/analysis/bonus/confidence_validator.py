@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 from ...current_weather import CurrentWeather
-from ...forecast import ForecastPeriod
+from ...weather_client import ForecastPeriod
 
 class ConfidenceValidator:
     def __init__(self, knowledge: Dict[str, Any]):

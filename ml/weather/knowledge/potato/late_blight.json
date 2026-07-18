@@ -1,0 +1,84 @@
+{
+  "disease_id": "potato_late_blight",
+  "crop": "Potato",
+  "disease_name": "Late Blight",
+  "scientific_cause": "Phytophthora infestans",
+  "disease_type": "Oomycete",
+  "description": "Late blight is a highly destructive disease of potato caused by the oomycete Phytophthora infestans. Under cool, wet, and humid conditions it can spread rapidly and cause severe foliage and tuber losses.",
+  "symptoms": [
+    "Irregular pale green or water-soaked lesions appear on leaves",
+    "Lesions rapidly enlarge and become brown to black",
+    "White fuzzy pathogen growth may appear around lesion margins, especially on leaf undersides during humid conditions",
+    "Stems and petioles may develop dark brown or black lesions",
+    "Severely infected foliage may collapse rapidly",
+    "Tubers may develop irregular brown or purplish skin lesions",
+    "Internal tuber tissue may show reddish-brown granular decay"
+  ],
+  "favorable_conditions": {
+    "temperature_celsius": {
+      "min": 10,
+      "max": 24
+    },
+    "humidity": "Very high",
+    "leaf_wetness": "Prolonged leaf wetness strongly favors disease development",
+    "rainfall": "Frequent rainfall and wet conditions greatly increase risk",
+    "additional_conditions": "Cool nights, high relative humidity, fog, dew, and wet foliage can promote rapid epidemics"
+  },
+  "spread": [
+    "Airborne spores can travel between plants and fields",
+    "Rain and wind-driven moisture can aid local dispersal",
+    "Infected seed tubers can introduce the pathogen",
+    "Volunteer potato plants and infected cull piles can act as inoculum sources"
+  ],
+  "risk_factors": [
+    "Cool and wet weather",
+    "Very high humidity",
+    "Prolonged leaf wetness",
+    "Infected seed tubers",
+    "Volunteer potato plants",
+    "Poorly managed infected potato waste or cull piles"
+  ],
+  "prevention": [
+    "Use certified healthy seed tubers",
+    "Destroy or properly manage infected cull potatoes",
+    "Control volunteer potato plants",
+    "Monitor weather conditions associated with late blight risk",
+    "Scout fields frequently during cool and wet periods",
+    "Avoid irrigation practices that unnecessarily prolong foliage wetness",
+    "Use resistant or tolerant cultivars where locally suitable and available"
+  ],
+  "treatment": {
+    "immediate_actions": [
+      "Treat suspected late blight as urgent because the disease can spread rapidly",
+      "Inspect surrounding plants and fields",
+      "Avoid moving infected plant material between fields",
+      "Seek confirmation from an agricultural expert when diagnosis is uncertain"
+    ],
+    "cultural_control": [
+      "Destroy major inoculum sources",
+      "Control volunteer potatoes",
+      "Improve field airflow where possible",
+      "Manage irrigation to reduce prolonged foliage wetness"
+    ],
+    "biological_control": [
+      "Biological products may provide supplementary preventive protection where registered, but should not be relied upon alone during severe late blight outbreaks"
+    ],
+    "chemical_control": {
+      "recommended": "Preventive and targeted fungicide programs may be necessary when late blight risk is high. Product selection should account for local pathogen resistance and current recommendations.",
+      "active_ingredients_examples": [
+        "Mancozeb",
+        "Chlorothalonil",
+        "Mandipropamid",
+        "Cyazofamid"
+      ],
+      "warning": "Late blight can develop fungicide resistance. Use only locally registered products and follow current resistance-management guidance, label directions, dosage, application interval, protective-equipment requirements, and pre-harvest intervals."
+    }
+  },
+  "severity_guidance": {
+    "low": "A suspected localized lesion requires immediate inspection and confirmation because late blight can spread quickly.",
+    "moderate": "Multiple plants or lesions are present. Prompt integrated management and professional guidance are recommended.",
+    "high": "Rapid spread, stem infection, or widespread canopy collapse indicates a serious outbreak requiring urgent local expert guidance."
+  },
+  "farmer_advice": "Late blight is an urgent disease. During cool, humid, and rainy weather, inspect crops frequently and act quickly when suspicious water-soaked or rapidly expanding lesions appear.",
+  "disclaimer": "AI-based identification should not be the sole basis for managing suspected late blight. Similar symptoms may have other causes. Seek confirmation when possible, especially during rapidly developing outbreaks."
+}

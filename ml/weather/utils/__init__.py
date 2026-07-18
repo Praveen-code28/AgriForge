@@ -1,5 +1,3 @@
-# ml/weather/utils/__init__.py
-
 from .exceptions import (
     WeatherIntelligenceError,
     WeatherAPIFailure,
@@ -22,14 +20,12 @@ from .helpers import (
 )
 
 __all__ = [
-    # Exceptions
     "WeatherIntelligenceError",
     "WeatherAPIFailure",
     "KnowledgeNotFoundError",
     "LocationResolutionError",
     "InvalidWeatherDataError",
     "ConfigurationError",
-    # Helpers
     "safe_avg",
     "safe_clamp",
     "format_datetime",

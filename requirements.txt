@@ -1,17 +1,48 @@
-fastapi
-uvicorn[standard]
+fastapi>=0.110
+uvicorn[standard]>=0.27
 
+# ML / inference
+torch
+timm
+albumentations
 numpy
 pandas
-scikit-learn
-matplotlib
-seaborn
 Pillow
 opencv-python
 
+# API / config
 python-multipart
-pydantic
+pydantic[email]>=2.0
+pydantic-settings>=2.0
 python-dotenv
 
+# Database
+sqlalchemy>=2.0
+alembic>=1.13
+psycopg2-binary>=2.9
+
+# Auth
+bcrypt>=4.0
+python-jose[cryptography]>=3.3
+
+# HTTP
+requests>=2.31
+
+# Dev / test
+pytest>=8.0
+httpx>=0.27
+
+# Notebooks (existing)
 jupyter
 ipykernel
+
+# Legacy (weather module listing; rule-based, not used at runtime)
+scikit-learn
+matplotlib
+seaborn
+
+# AI / Orchestration
+crewai>=0.30.0
+duckduckgo-search>=6.0.0
+beautifulsoup4>=4.12.0
+
