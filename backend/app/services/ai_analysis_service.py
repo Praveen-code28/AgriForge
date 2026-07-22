@@ -1,8 +1,10 @@
 import logging
 import sys
+import time
 from typing import Any
 from sqlalchemy.orm import Session
 
+from backend.app.services import report_synthesis
 from backend.app.services.analysis_service import AnalysisService
 
 logger = logging.getLogger(__name__)
@@ -43,58 +45,39 @@ class AIAnalysisService:
         Runs the deterministic pipeline first, then optionally runs the CrewAI orchestration.
         Guarantees fallback to deterministic results if LLM or CrewAI fails.
         """
-        # 1. Run deterministic pipeline
+        # 1. Run deterministic pipeline (source of truth). Timed for diagnostics.
+        t0 = time.perf_counter()
         try:
             base_results = self.analysis_service.complete_analysis(image_path, lat, lon, address)
         except Exception as e:
             # If the core deterministic pipeline fails, we have to raise.
             raise RuntimeError(f"Core analysis failed: {e}") from e
+        deterministic_time = round(time.perf_counter() - t0, 3)
 
         disease_result = base_results["disease"]
         treatment_result = base_results["treatment"]
         weather_result = base_results["weather"]
 
-        # 2. Run CrewAI Orchestration
-        ai_report = None
-        crop = disease_result.get("primary", {}).get("plant", "Unknown")
-        disease = disease_result.get("primary", {}).get("disease", "Unknown")
-
+        # 2. Single-call AI synthesis with deterministic fallback.
+        source = "deterministic_fallback"
+        timings: dict[str, Any] = {"deterministic": deterministic_time}
         if self.crew_available and self.crew is not None:
             try:
                 ai_report = await self.crew.run_async(disease_result, weather_result, treatment_result)
                 source = getattr(self.crew, "last_report_source", "deterministic_fallback")
-                logger.info("AI_REPORT_SOURCE=%s", source)
+                timings.update(getattr(self.crew, "last_timings", {}) or {})
             except Exception as e:
-                logger.warning("CrewAI orchestration failed: %s. Falling back to deterministic results.", e)
-                ai_report = None
+                logger.warning("AI synthesis failed: %s. Using deterministic report.", e)
+                ai_report = report_synthesis.build_deterministic_report(
+                    disease_result, weather_result, treatment_result
+                )
+        else:
+            ai_report = report_synthesis.build_deterministic_report(
+                disease_result, weather_result, treatment_result
+            )
 
-        if ai_report is None:
-            logger.info("AI_REPORT_SOURCE=deterministic_fallback")
-            # Construct the fallback report dict directly matching AIReport schema
-            ai_report = {
-                "crop": crop,
-                "disease": {
-                    "name": disease,
-                    "confidence": disease_result.get("primary", {}).get("confidence", 0.0)
-                },
-                "weather": {
-                    "summary": "Weather data retrieved successfully.",
-                    "impact": "Unable to determine impact due to AI synthesis absence."
-                },
-                "risk": {
-                    "level": "MODERATE" if disease.lower() != "healthy" else "LOW",
-                    "reasons": ["AI report synthesis skipped. Relying on local rule-based database."]
-                },
-                "treatment": {
-                    "immediate_actions": [treatment_result.get("farmer_advice") or treatment_result.get("message") or "Contact local advisor."] if disease.lower() != "healthy" else [],
-                    "preventive_measures": []
-                },
-                "maintenance": [],
-                "if_untreated": "Please consult a local agricultural extension officer immediately.",
-                "additional_research": ["CrewAI orchestration is not installed."],
-                "farmer_summary": f"Automated analysis for {crop} encountering {disease}. Refer to local data.",
-                "sources": []
-            }
+        timings["total_analysis"] = round(time.perf_counter() - t0, 3)
+        logger.info("AI_REPORT_SOURCE=%s TIMING %s", source, timings)
 
         # 3. Format final response
         return {
@@ -103,5 +86,7 @@ class AIAnalysisService:
             "weather": weather_result,
             "combined": base_results["combined"],
             "ai_report": ai_report,
+            "ai_report_source": source,
+            "timings": timings,
         }
 

@@ -1,67 +1,61 @@
 import asyncio
-from types import SimpleNamespace
+import json
 
 from backend.app.crew.agriforge_crew import AgriForgeCrew
 
 
-class DummyTask:
-    def __init__(self):
-        self.agent = object()
-        self.output_pydantic = None
+class FakeLLM:
+    """Minimal stand-in for the crewai LLM used in report synthesis."""
+
+    def call(self, messages):
+        return json.dumps(
+            {
+                "weather_summary": "clear",
+                "weather_impact": "mild",
+                "immediate_actions": ["inspect leaves"],
+                "preventive_measures": ["water early"],
+                "maintenance": [],
+                "if_untreated": "risk rises",
+                "farmer_summary": "test summary",
+            }
+        )
 
 
-class DummyTasksFactory:
-    def __init__(self, agents):
-        self.agents = agents
+def test_agriforge_crew_single_llm_synthesis():
+    agents = type("A", (), {"llm": FakeLLM(), "search_tool": None})()
+    crew = AgriForgeCrew(agents)
 
-    def weather_analysis_task(self, weather_data_json):
-        return DummyTask()
-
-    def treatment_task(self, treatment_data_json):
-        return DummyTask()
-
-    def research_task(self, crop, disease):
-        return DummyTask()
-
-    def risk_analysis_task(self):
-        return DummyTask()
-
-    def report_task(self):
-        return DummyTask()
-
-
-class DummyCrew:
-    def __init__(self, agents, tasks, process, verbose):
-        self.agents = agents
-        self.tasks = tasks
-        self.process = process
-        self.verbose = verbose
-        self.kickoff_async_calls = 0
-
-    async def kickoff_async(self, inputs=None, input_files=None, from_checkpoint=None):
-        self.kickoff_async_calls += 1
-        self.inputs = inputs
-        return '{"crop": "tomato", "disease": {"name": "late_blight", "confidence": 0.91}, "weather": {"summary": "clear", "impact": "mild"}, "risk": {"level": "MODERATE", "reasons": ["test"]}, "treatment": {"immediate_actions": ["inspect leaves"], "preventive_measures": ["water early"]}, "maintenance": [], "if_untreated": "risk rises", "additional_research": [], "farmer_summary": "test summary", "sources": []}'
-
-
-def test_agriforge_crew_uses_async_kickoff(monkeypatch):
-    import backend.app.crew.agriforge_crew as crew_module
-
-    monkeypatch.setattr(crew_module, "AgriForgeTasks", DummyTasksFactory)
-
-    def fake_crew_factory(*args, **kwargs):
-        return DummyCrew(*args, **kwargs)
-
-    monkeypatch.setattr(crew_module, "Crew", fake_crew_factory)
-
-    crew = AgriForgeCrew(agents=object())
     result = asyncio.run(
         crew.run_async(
             disease_result={"primary": {"plant": "tomato", "disease": "late_blight", "confidence": 0.91}},
-            weather_result={"summary": "test"},
-            treatment_result={"found": True, "farmer_advice": "Keep leaves dry"},
+            weather_result={"weather_analysis": {"risk_score": 80}},
+            treatment_result={"found": True, "farmer_advice": "Keep leaves dry", "treatment": {"immediate_actions": ["x"]}},
         )
     )
 
     assert result["crop"] == "tomato"
     assert result["disease"]["name"] == "late_blight"
+    # Core value (risk) stays deterministic, not invented by the LLM.
+    assert result["risk"]["level"] == "HIGH"
+    assert crew.last_report_source == "llm"
+
+
+def test_agriforge_crew_deterministic_fallback_on_llm_failure():
+    class BrokenLLM:
+        def call(self, messages):
+            raise RuntimeError("401 authentication failed")
+
+    agents = type("A", (), {"llm": BrokenLLM(), "search_tool": None})()
+    crew = AgriForgeCrew(agents)
+
+    result = asyncio.run(
+        crew.run_async(
+            disease_result={"primary": {"plant": "tomato", "disease": "late_blight", "confidence": 0.91}},
+            weather_result={"weather_analysis": {"risk_score": 80}},
+            treatment_result={"found": True, "treatment": {"immediate_actions": ["Remove infected leaves"]}},
+        )
+    )
+
+    assert crew.last_report_source == "deterministic_fallback"
+    assert result["risk"]["level"] != "UNKNOWN"
+    assert result["treatment"]["immediate_actions"]

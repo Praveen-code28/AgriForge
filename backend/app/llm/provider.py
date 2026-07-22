@@ -21,25 +21,35 @@ def get_llm() -> Optional[LLM]:
     deterministic results as enforced by AgriForgeCrew.
     """
     settings = get_settings()
-    
+
+    if not settings.LLM_API_KEY:
+        logger.warning(
+            "LLM_API_KEY not set; AI synthesis disabled. Reports will use the "
+            "deterministic fallback."
+        )
+        return None
+
+    model = settings.resolved_llm_model
     kwargs = {
-        "model": settings.LLM_MODEL,
+        "model": model,
+        "api_key": settings.LLM_API_KEY,
+        "timeout": settings.LLM_TIMEOUT_SECONDS,
+        "max_tokens": settings.LLM_MAX_TOKENS,
     }
-    
-    # Only pass api_key if explicitly set. Otherwise, LiteLLM will automatically
-    # look for standard environment variables (e.g., OPENAI_API_KEY).
-    if settings.LLM_API_KEY:
-        kwargs["api_key"] = settings.LLM_API_KEY
-        
     if settings.LLM_BASE_URL:
         kwargs["base_url"] = settings.LLM_BASE_URL
-        
+
     try:
-        logger.info(f"Initializing CrewAI LLM with model: {settings.LLM_MODEL}")
+        logger.info(
+            "Initializing LLM: model=%s base_url=%s", model, settings.LLM_BASE_URL
+        )
         return LLM(**kwargs)
     except Exception as e:
         logger.error(
-            f"Failed to initialize LLM with model '{settings.LLM_MODEL}': {e}. "
-            "AI orchestration will be disabled. Falling back to deterministic pipeline."
+            "Failed to initialize LLM (model=%s, base_url=%s): %s. "
+            "AI synthesis disabled; using deterministic fallback.",
+            model,
+            settings.LLM_BASE_URL,
+            e,
         )
         return None

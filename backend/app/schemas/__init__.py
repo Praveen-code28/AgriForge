@@ -114,6 +114,8 @@ class AIReportResponse(BaseModel):
     weather: dict | None
     combined: dict
     ai_report: AIReport | dict | None
+    ai_report_source: str | None = None
+    timings: dict | None = None
 
 
 class YieldPredictionRequest(BaseModel):

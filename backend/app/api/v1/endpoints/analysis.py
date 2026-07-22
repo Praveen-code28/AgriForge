@@ -166,6 +166,8 @@ async def get_ai_report(
         weather=weather,
         combined=results["combined"],
         ai_report=results.get("ai_report"),
+        ai_report_source=results.get("ai_report_source"),
+        timings=results.get("timings"),
     )
 
 

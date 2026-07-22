@@ -1,101 +1,184 @@
+import asyncio
 import json
-import pytest
-from unittest.mock import MagicMock, patch
 
-from backend.app.agents.agriforge_agents import AgriForgeAgents
 from backend.app.crew.agriforge_crew import AgriForgeCrew
+from backend.app.services import report_synthesis
 from backend.app.tools.trusted_search_tool import TrustedAgricultureSearchTool
-from backend.app.schemas.ai_report import AIReport
 
 
-@pytest.fixture
-def mock_agents():
-    # We don't need real services for testing the orchestration routing
-    agents = AgriForgeAgents(
-        disease_service=MagicMock(),
-        weather_service=MagicMock(),
-        treatment_service=MagicMock(),
-    )
-    # CrewAI Pydantic validation requires a string or a valid LLM object
-    agents.llm = "gpt-4o"
-    return agents
-
-
-@pytest.fixture
-def crew(mock_agents):
-    return AgriForgeCrew(mock_agents)
-
-
+# ---------------------------------------------------------------------------
+# Trusted search domain filtering (unchanged behaviour)
+# ---------------------------------------------------------------------------
 def test_trusted_search_domain_filtering():
     tool = TrustedAgricultureSearchTool()
-    
+
     assert tool._is_trusted_domain("https://fao.org/some/path") is True
     assert tool._is_trusted_domain("http://www.fao.org") is True
     assert tool._is_trusted_domain("https://ippc.int") is True
     assert tool._is_trusted_domain("https://icar.gov.in/research") is True
-    
+
     assert tool._is_trusted_domain("https://agri.gov.in") is True
     assert tool._is_trusted_domain("https://state.nic.in") is True
     assert tool._is_trusted_domain("https://university.edu/extension") is True
-    
+
     assert tool._is_trusted_domain("https://evil-fao.org") is False
     assert tool._is_trusted_domain("https://fakeedu.com") is False
     assert tool._is_trusted_domain("https://blog.com") is False
 
 
-@patch("backend.app.crew.agriforge_crew.Crew")
-def test_crew_routing_local_knowledge_sufficient(mock_crew_class, crew):
-    # Setup mock crew kickoff return
-    mock_crew_instance = mock_crew_class.return_value
-    mock_crew_instance.kickoff.return_value = '```json\n{"crop": "tomato", "disease": "blight", "weather": {}, "risk": {}, "treatment": {}, "maintenance": [], "if_untreated": "", "farmer_summary": "", "sources": []}\n```'
-
-    disease_result = {"primary": {"plant": "tomato", "disease": "blight", "confidence": 0.99}}
-    weather_result = {}
-    treatment_result = {"found": True, "treatment": "Copper fungicide"}
-    
-    result = crew.run(disease_result, weather_result, treatment_result)
-    
-    # Verify research task is NOT included
-    # The tasks_list should have weather, treatment, risk, report (4 tasks)
-    called_tasks = mock_crew_class.call_args[1]["tasks"]
-    assert len(called_tasks) == 4
-    task_descriptions = [t.description for t in called_tasks]
-    assert not any("TrustedAgricultureSearchTool" in desc for desc in task_descriptions)
-    
-    assert "crop" in result
+def test_ssrf_blocks_private_hosts(monkeypatch):
+    tool = TrustedAgricultureSearchTool()
+    # localhost / private ranges must never be fetched even if scheme is fine.
+    assert tool._is_public_host("localhost") in (False,)
+    # A trusted-looking domain that resolves to a private IP is rejected.
+    monkeypatch.setattr(
+        "backend.app.tools.trusted_search_tool.socket.getaddrinfo",
+        lambda *a, **k: [(2, 1, 6, "", ("127.0.0.1", 0))],
+    )
+    assert tool._safe_url("https://icar.gov.in/x") is False
 
 
-@patch("backend.app.crew.agriforge_crew.Crew")
-def test_crew_routing_research_fallback(mock_crew_class, crew):
-    # Setup mock crew kickoff return
-    mock_crew_instance = mock_crew_class.return_value
-    mock_crew_instance.kickoff.return_value = '{"crop": "potato", "disease": "blight", "weather": {}, "risk": {}, "treatment": {}, "maintenance": [], "if_untreated": "", "farmer_summary": "", "sources": []}'
-
-    disease_result = {"primary": {"plant": "potato", "disease": "blight", "confidence": 0.95}}
-    weather_result = {}
-    treatment_result = {"found": False, "message": "No local knowledge"}
-    
-    result = crew.run(disease_result, weather_result, treatment_result)
-    
-    # Verify research task IS included
-    # The tasks_list should have weather, treatment, research, risk, report (5 tasks)
-    called_tasks = mock_crew_class.call_args[1]["tasks"]
-    assert len(called_tasks) == 5
-    task_descriptions = [t.description for t in called_tasks]
-    assert any("TrustedAgricultureSearchTool" in desc for desc in task_descriptions)
+# ---------------------------------------------------------------------------
+# Deterministic risk + report (no LLM required, never UNKNOWN)
+# ---------------------------------------------------------------------------
+def test_compute_risk_healthy_is_low():
+    level, reasons = report_synthesis.compute_risk("healthy", True, {})
+    assert level == "LOW"
+    assert reasons
 
 
-@patch("backend.app.crew.agriforge_crew.Crew")
-def test_crew_routing_healthy_crop(mock_crew_class, crew):
-    mock_crew_instance = mock_crew_class.return_value
-    mock_crew_instance.kickoff.return_value = "{}"
+def test_compute_risk_disease_high_weather():
+    weather = {"weather_analysis": {"risk_score": 80}}
+    level, _ = report_synthesis.compute_risk("late_blight", True, weather)
+    assert level == "HIGH"
 
-    disease_result = {"primary": {"plant": "tomato", "disease": "healthy", "confidence": 0.99}}
-    weather_result = {}
-    # Even if treatment_result says found=False, we don't research for 'healthy'
-    treatment_result = {"found": False}
-    
-    crew.run(disease_result, weather_result, treatment_result)
-    
-    called_tasks = mock_crew_class.call_args[1]["tasks"]
-    assert len(called_tasks) == 4  # Research task skipped because disease == 'healthy'
+
+def test_compute_risk_no_treatment_escalates_to_critical():
+    weather = {"weather_analysis": {"risk_score": 85}}
+    level, _ = report_synthesis.compute_risk("late_blight", False, weather)
+    assert level == "CRITICAL"
+
+
+def test_deterministic_report_is_useful():
+    disease_result = {"primary": {"plant": "tomato", "disease": "early_blight", "confidence": 0.91}}
+    weather_result = {
+        "weather_analysis": {"risk": "High", "risk_score": 75, "reasons": ["humid"]},
+        "current_weather": {"temperature": 27, "humidity": 85, "condition": "Cloudy"},
+        "spray_recommendation": {"spray_today": False, "best_time": "06:00 AM"},
+    }
+    treatment_result = {
+        "found": True,
+        "disease_name": "Early Blight",
+        "treatment": {"immediate_actions": ["Remove infected leaves"]},
+        "prevention": ["Rotate crops"],
+        "farmer_advice": "Inspect lower leaves.",
+    }
+    report = report_synthesis.build_deterministic_report(disease_result, weather_result, treatment_result)
+
+    assert report["crop"] == "tomato"
+    assert report["disease"]["name"] == "early_blight"
+    assert report["risk"]["level"] != "UNKNOWN"
+    assert report["treatment"]["immediate_actions"]
+    assert report["farmer_summary"]
+
+
+# ---------------------------------------------------------------------------
+# Orchestration: single-call synthesis + research routing
+# ---------------------------------------------------------------------------
+class FakeLLM:
+    def __init__(self):
+        self.calls = 0
+
+    def call(self, messages):
+        self.calls += 1
+        return json.dumps(
+            {
+                "weather_summary": "Warm and humid.",
+                "weather_impact": "Favours blight.",
+                "immediate_actions": ["Remove infected leaves"],
+                "preventive_measures": ["Rotate crops"],
+                "maintenance": ["Scout weekly"],
+                "if_untreated": "Spread will worsen.",
+                "farmer_summary": "Act now to protect your tomato.",
+            }
+        )
+
+
+def test_generate_report_uses_single_llm_call():
+    llm = FakeLLM()
+    disease_result = {"primary": {"plant": "tomato", "disease": "early_blight", "confidence": 0.91}}
+    treatment_result = {"found": True, "treatment": {"immediate_actions": ["x"]}, "prevention": ["y"]}
+    report, source, timings = asyncio.run(
+        report_synthesis.generate_report(disease_result, {}, treatment_result, llm=llm)
+    )
+    assert llm.calls == 1
+    assert source == "llm"
+    assert report["farmer_summary"] == "Act now to protect your tomato."
+    assert "llm" in timings
+
+
+def test_generate_report_falls_back_without_llm():
+    disease_result = {"primary": {"plant": "tomato", "disease": "early_blight", "confidence": 0.91}}
+    treatment_result = {"found": True, "treatment": {"immediate_actions": ["x"]}}
+    report, source, _ = asyncio.run(
+        report_synthesis.generate_report(disease_result, {}, treatment_result, llm=None)
+    )
+    assert source == "deterministic_fallback"
+    assert report["risk"]["level"] != "UNKNOWN"
+
+
+def test_research_only_when_needed():
+    calls = []
+
+    def search_fn(query):
+        calls.append(query)
+        return [{"title": "FAO guide", "url": "https://fao.org/x", "snippet": "..."}]
+
+    # healthy -> no research
+    asyncio.run(
+        report_synthesis.generate_report(
+            {"primary": {"plant": "tomato", "disease": "healthy", "confidence": 0.99}},
+            {},
+            {"found": False},
+            llm=None,
+            search_fn=search_fn,
+        )
+    )
+    assert calls == []
+
+    # disease present + local knowledge found -> no research
+    asyncio.run(
+        report_synthesis.generate_report(
+            {"primary": {"plant": "tomato", "disease": "late_blight", "confidence": 0.95}},
+            {},
+            {"found": True, "treatment": {"immediate_actions": ["x"]}},
+            llm=None,
+            search_fn=search_fn,
+        )
+    )
+    assert calls == []
+
+    # disease present + no local knowledge -> research runs
+    asyncio.run(
+        report_synthesis.generate_report(
+            {"primary": {"plant": "tomato", "disease": "late_blight", "confidence": 0.95}},
+            {},
+            {"found": False},
+            llm=None,
+            search_fn=search_fn,
+        )
+    )
+    assert len(calls) == 1
+
+
+def test_crew_wrapper_delegates():
+    llm = FakeLLM()
+    agents = type("A", (), {"llm": llm, "search_tool": None})()
+    crew = AgriForgeCrew(agents)
+    result = crew.run(
+        {"primary": {"plant": "tomato", "disease": "early_blight", "confidence": 0.9}},
+        {},
+        {"found": True, "treatment": {"immediate_actions": ["x"]}, "prevention": ["y"]},
+    )
+    assert result["crop"] == "tomato"
+    assert crew.last_report_source == "llm"
