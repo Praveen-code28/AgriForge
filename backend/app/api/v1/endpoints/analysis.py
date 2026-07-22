@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
 from backend.app.api.deps import (
@@ -29,6 +29,25 @@ def analyze_weather(
     current_user: Annotated[User, Depends(get_current_user)],
     weather_service: Annotated[WeatherService, Depends(get_weather_service)],
 ):
+    has_coords = payload.lat is not None and payload.lon is not None
+    has_address = bool((payload.address or "").strip())
+
+    if payload.lat is not None and payload.lon is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Both latitude and longitude must be provided together.",
+        )
+    if payload.lon is not None and payload.lat is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Both latitude and longitude must be provided together.",
+        )
+    if not has_coords and not has_address:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Location is required: provide both latitude and longitude, or a non-empty address.",
+        )
+
     return weather_service.analyze(
         payload.crop,
         payload.disease,
@@ -114,7 +133,7 @@ async def get_ai_report(
         else str(saved_path)
     )
 
-    results = ai_analysis_service.complete_ai_analysis(str(saved_path), lat, lon, address)
+    results = await ai_analysis_service.complete_ai_analysis(str(saved_path), lat, lon, address)
 
     record = prediction_repo.create_prediction(
         db,

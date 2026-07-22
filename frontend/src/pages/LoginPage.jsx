@@ -25,6 +25,7 @@ export default function LoginPage() {
     try {
       const response = await loginUser(form);
       const token = response.data.access_token;
+      login(token, null);
       const userResponse = await getCurrentUser();
       login(token, userResponse.data);
       navigate('/dashboard');

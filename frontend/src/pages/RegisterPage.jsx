@@ -34,8 +34,10 @@ export default function RegisterPage() {
     try {
       await registerUser({ full_name: form.full_name, email: form.email, password: form.password });
       const response = await loginUser({ email: form.email, password: form.password });
+      const token = response.data.access_token;
+      login(token, null);
       const userResponse = await getCurrentUser();
-      login(response.data.access_token, userResponse.data);
+      login(token, userResponse.data);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.detail || 'Unable to create your account right now.');

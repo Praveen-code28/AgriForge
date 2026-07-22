@@ -16,8 +16,9 @@ class AgriForgeTasks:
             description=(
                 "Analyze the provided weather data for the crop and disease. "
                 "Data: {weather_data_json}\n"
+                "The disease and crop were already predicted by the DL model, so treat them as factual inputs. "
                 "Explain the impact of these specific conditions on the disease's progression. "
-                "Do not hallucinate weather data. Use strictly what is provided."
+                "Do not hallucinate weather data or invent values. Use strictly what is provided."
             ),
             expected_output="A structured summary of the weather conditions and their specific impact on the crop/disease.",
             agent=self.agents.weather_analysis_agent(),
@@ -28,8 +29,9 @@ class AgriForgeTasks:
             description=(
                 "Format the provided local treatment data into actionable advice. "
                 "Data: {treatment_data_json}\n"
+                "The crop and disease were already predicted by the DL model, so treat them as factual inputs. "
                 "If the data says treatment was not found or is insufficient, explicitly state that. "
-                "Do not invent dosages or chemicals not present in the data."
+                "Do not invent dosages, concentrations, or chemicals not present in the data."
             ),
             expected_output="A clear list of immediate actions and preventive measures based STRICTLY on the provided data.",
             agent=self.agents.treatment_agent(),
@@ -54,7 +56,8 @@ class AgriForgeTasks:
         return Task(
             description=(
                 "Synthesize the disease prediction (including confidence), the weather analysis, "
-                "and the available treatment/research to assess the current risk to the farm."
+                "and the available treatment/research to assess the current risk to the farm. "
+                "Use the disease prediction as a factual input and do not invent disease confidence or weather values."
             ),
             expected_output=(
                 "A risk assessment containing a level (LOW, MODERATE, HIGH, CRITICAL) "
@@ -68,6 +71,7 @@ class AgriForgeTasks:
             description=(
                 "Compile all previous analyses into the final structured farmer report. "
                 "Ensure that if the disease is 'healthy', the risk and treatment reflect that. "
+                "Use the DL disease prediction and deterministic weather/treatment results as factual inputs. "
                 "Make sure to output the final result strictly matching the AIReport JSON schema."
             ),
             expected_output=(

@@ -1,8 +1,11 @@
+import logging
 import sys
 from typing import Any
 from sqlalchemy.orm import Session
 
 from backend.app.services.analysis_service import AnalysisService
+
+logger = logging.getLogger(__name__)
 
 
 class AIAnalysisService:
@@ -29,7 +32,7 @@ class AIAnalysisService:
             self.agents = None
             self.crew = None
 
-    def complete_ai_analysis(
+    async def complete_ai_analysis(
         self,
         image_path: str,
         lat: float | None = None,
@@ -58,11 +61,15 @@ class AIAnalysisService:
 
         if self.crew_available and self.crew is not None:
             try:
-                ai_report = self.crew.run(disease_result, weather_result, treatment_result)
+                ai_report = await self.crew.run_async(disease_result, weather_result, treatment_result)
+                source = getattr(self.crew, "last_report_source", "deterministic_fallback")
+                logger.info("AI_REPORT_SOURCE=%s", source)
             except Exception as e:
-                print(f"CrewAI orchestration failed: {e}. Falling back to deterministic results.")
+                logger.warning("CrewAI orchestration failed: %s. Falling back to deterministic results.", e)
+                ai_report = None
 
         if ai_report is None:
+            logger.info("AI_REPORT_SOURCE=deterministic_fallback")
             # Construct the fallback report dict directly matching AIReport schema
             ai_report = {
                 "crop": crop,
