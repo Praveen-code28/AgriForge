@@ -1,9 +1,13 @@
+import logging
+import time
 from typing import Any
 
 from backend.app.ml.crop_validation import CropValidationLayer
 from backend.app.ml.disease_inference import DiseaseInferenceService
 from backend.app.ml.weather_inference import WeatherInferenceService
 from backend.app.services.treatment_service import TreatmentService
+
+logger = logging.getLogger(__name__)
 
 
 class DiseaseService:
@@ -14,7 +18,9 @@ class DiseaseService:
     def predict_disease(self, image_path: str) -> dict[str, Any]:
         predictions = self.inference.predict(image_path)
         primary = predictions[0]
-        validation = self.crop_validator.validate(primary["plant"], primary["confidence"])
+        validation = self.crop_validator.validate(
+            primary["plant"], primary["confidence"], predictions
+        )
         return {
             "primary": primary,
             "predictions": predictions,
@@ -58,18 +64,28 @@ class AnalysisService:
         lon: float | None = None,
         address: str | None = None,
     ) -> dict[str, Any]:
+        t0 = time.perf_counter()
         disease_result = self.disease_service.predict_disease(image_path)
+        dl_time = round(time.perf_counter() - t0, 3)
         primary = disease_result["primary"]
         crop = primary["plant"]
         disease = primary["disease"]
         confidence = primary["confidence"]
 
+        t1 = time.perf_counter()
         treatment = self.treatment_service.get_treatment(crop, disease)
+        treatment_time = round(time.perf_counter() - t1, 3)
 
-        if disease == "healthy":
-            weather = self.weather_service.analyze(crop, disease, confidence, lat, lon, address)
-        else:
-            weather = self.weather_service.analyze(crop, disease, confidence, lat, lon, address)
+        t2 = time.perf_counter()
+        weather = self.weather_service.analyze(crop, disease, confidence, lat, lon, address)
+        weather_time = round(time.perf_counter() - t2, 3)
+
+        logger.info(
+            "TIMING dl_inference=%ss treatment=%ss weather=%ss",
+            dl_time,
+            treatment_time,
+            weather_time,
+        )
 
         combined = {
             "crop": crop,

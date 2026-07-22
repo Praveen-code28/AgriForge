@@ -4,19 +4,29 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+import logging
+
 from backend.app.api.v1.router import api_router
-from backend.app.core.config import get_settings
+from backend.app.core.config import get_settings, validate_config
 from backend.app.ml.disease_inference import DiseaseInferenceService
 from backend.app.ml.weather_inference import WeatherInferenceService
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
+    validate_config(settings)
     settings.upload_path.mkdir(parents=True, exist_ok=True)
     model_path = settings.repo_root / settings.MODEL_PATH
-    if model_path.exists():
-        DiseaseInferenceService.get_instance(model_path)
+    if not model_path.exists():
+        logger.warning(
+            "DL checkpoint not found at %s; using mock inference fallback.", model_path
+        )
+    # Always initialise the singleton; it degrades to a mock when the checkpoint
+    # or torch is unavailable, so the service still starts for the demo.
+    DiseaseInferenceService.get_instance(model_path)
     WeatherInferenceService.get_instance(
         str(settings.repo_root / settings.KNOWLEDGE_BASE_PATH),
         settings.OPENWEATHER_API_KEY or None,

@@ -1,5 +1,7 @@
+import ipaddress
 import json
 import logging
+import socket
 from urllib.parse import urlparse
 from typing import Type, Optional
 import requests
@@ -9,6 +11,11 @@ from crewai.tools import BaseTool
 from backend.app.search.provider import get_search_provider
 
 logger = logging.getLogger(__name__)
+
+# SSRF / fetch safety limits.
+MAX_CONTENT_BYTES = 512 * 1024  # 512 KB cap on fetched page size
+MAX_REDIRECTS = 3
+FETCH_TIMEOUT = 5
 
 # If bs4 is available, we use it to parse full text.
 try:
@@ -73,23 +80,92 @@ class TrustedAgricultureSearchTool(BaseTool):
         except Exception:
             return False
             
+    def _is_public_host(self, hostname: str) -> bool:
+        """Resolve a hostname and ensure every IP is public (SSRF guard)."""
+        if not hostname:
+            return False
+        try:
+            infos = socket.getaddrinfo(hostname, None)
+        except Exception as e:  # noqa: BLE001
+            logger.warning("DNS resolution failed for %s: %s", hostname, e)
+            return False
+        for info in infos:
+            ip = ipaddress.ip_address(info[4][0])
+            if (
+                ip.is_private
+                or ip.is_loopback
+                or ip.is_link_local
+                or ip.is_reserved
+                or ip.is_multicast
+                or ip.is_unspecified
+            ):
+                logger.warning("Blocked SSRF attempt to non-public IP %s (%s)", ip, hostname)
+                return False
+        return True
+
+    def _safe_url(self, url: str) -> bool:
+        """A URL is safe only if it is https/http, on a trusted domain, and
+        resolves exclusively to public IP addresses."""
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            return False
+        if not self._is_trusted_domain(url):
+            return False
+        return self._is_public_host(parsed.hostname or "")
+
     def _extract_page_content(self, url: str) -> str:
-        """Attempt to fetch and extract the text from the URL."""
+        """Fetch and extract text from a trusted URL with SSRF protections.
+
+        Guards: scheme allow-list, trusted-domain check, public-IP check on every
+        redirect hop, response size cap, and content-type check.
+        """
         if not BeautifulSoup:
             return ""
+        headers = {"User-Agent": "AgriForge/1.0 (+agricultural-research-bot)"}
+        current = url
         try:
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-            resp = requests.get(url, headers=headers, timeout=5)
-            if resp.status_code == 200:
-                soup = BeautifulSoup(resp.text, "html.parser")
-                # Remove scripts and styles
+            for _ in range(MAX_REDIRECTS + 1):
+                if not self._safe_url(current):
+                    logger.warning("Refusing to fetch unsafe/untrusted URL: %s", current)
+                    return ""
+                resp = requests.get(
+                    current,
+                    headers=headers,
+                    timeout=FETCH_TIMEOUT,
+                    stream=True,
+                    allow_redirects=False,
+                )
+                if resp.is_redirect or resp.status_code in (301, 302, 303, 307, 308):
+                    location = resp.headers.get("Location")
+                    resp.close()
+                    if not location:
+                        return ""
+                    current = requests.compat.urljoin(current, location)
+                    continue
+
+                if resp.status_code != 200:
+                    resp.close()
+                    return ""
+
+                content_type = resp.headers.get("Content-Type", "")
+                if "html" not in content_type and "text" not in content_type:
+                    resp.close()
+                    return ""
+
+                chunks = b""
+                for chunk in resp.iter_content(chunk_size=8192):
+                    chunks += chunk
+                    if len(chunks) >= MAX_CONTENT_BYTES:
+                        break
+                resp.close()
+
+                soup = BeautifulSoup(chunks, "html.parser")
                 for script in soup(["script", "style"]):
                     script.extract()
                 text = soup.get_text(separator=" ", strip=True)
-                # Return first 1500 chars to avoid overwhelming the LLM
                 return text[:1500] + ("..." if len(text) > 1500 else "")
-        except Exception as e:
-            logger.warning(f"Failed to extract content from {url}: {e}")
+        except Exception as e:  # noqa: BLE001
+            logger.warning("Failed to extract content from %s: %s", url, e)
         return ""
 
     def _run(self, query: str) -> str:

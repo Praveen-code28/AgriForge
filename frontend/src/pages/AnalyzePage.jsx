@@ -106,6 +106,7 @@ export default function AnalyzePage() {
   };
 
   const aiSummary = result?.report?.ai_report;
+  const cropValidation = result?.report?.combined?.crop_validation;
   const detectedDisease = aiSummary?.disease?.name || result?.report?.combined?.disease || 'Pending';
   const weatherImpact = aiSummary?.weather?.impact || result?.report?.weather?.weather_analysis?.risk || 'Weather analysis unavailable.';
   const riskLevel = aiSummary?.risk?.level || 'UNKNOWN';
@@ -169,9 +170,15 @@ export default function AnalyzePage() {
           </div>
           {result ? (
             <div className="result-stack">
+              {cropValidation?.ood_warning && (
+                <div className="error-banner">{cropValidation.ood_warning}</div>
+              )}
               <div className="result-card">
                 <h3>Detected problem</h3>
                 <p>{detectedDisease}</p>
+                {cropValidation?.advisory && (
+                  <p style={{ fontSize: '0.8rem', opacity: 0.7 }}>{cropValidation.advisory}</p>
+                )}
               </div>
               <div className="result-card">
                 <h3>Weather impact</h3>
@@ -205,8 +212,14 @@ export default function AnalyzePage() {
               )}
               {aiSummary?.sources?.length > 0 && (
                 <div className="result-card">
-                  <h3>Market insight</h3>
-                  <p>Trusted references were included for this recommendation.</p>
+                  <h3>Trusted references</h3>
+                  <ul>
+                    {aiSummary.sources.map((s, i) => (
+                      <li key={i}>
+                        <a href={s.url} target="_blank" rel="noreferrer">{s.title || s.organization || s.url}</a>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
