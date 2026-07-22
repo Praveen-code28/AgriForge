@@ -12,7 +12,7 @@ from backend.app.api.deps import (
 )
 from backend.app.core.config import Settings
 from backend.app.db.session import get_db
-from backend.app.models import User
+from backend.app.models import User, AnalysisReport
 from backend.app.repositories.prediction_repository import PredictionRepository
 from backend.app.schemas import PaginatedPredictions, PredictionRead
 from backend.app.services.analysis_service import DiseaseService
@@ -85,3 +85,29 @@ def get_prediction(
     if not record:
         raise HTTPException(status_code=404, detail="Prediction not found")
     return _to_prediction_read(record)
+
+
+@router.get("/{prediction_id}/report")
+def get_prediction_report(
+    prediction_id: int,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    report = (
+        db.query(AnalysisReport)
+        .filter(
+            AnalysisReport.prediction_id == prediction_id,
+            AnalysisReport.user_id == current_user.id
+        )
+        .first()
+    )
+    if not report:
+        raise HTTPException(status_code=404, detail="Analysis report not found")
+
+    return {
+        "prediction_id": report.prediction_id,
+        "disease": json.loads(report.disease_result),
+        "treatment": json.loads(report.treatment_result),
+        "weather": json.loads(report.weather_result) if report.weather_result else None,
+        "combined": json.loads(report.combined_json),
+    }

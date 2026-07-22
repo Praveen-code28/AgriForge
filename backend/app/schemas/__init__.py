@@ -114,3 +114,18 @@ class AIReportResponse(BaseModel):
     weather: dict | None
     combined: dict
     ai_report: AIReport | dict | None
+
+
+class YieldPredictionRequest(BaseModel):
+    soil_ph: float
+    nitrogen: float
+    phosphorus: float
+    potassium: float
+    crop: str
+
+
+class YieldPredictionResponse(BaseModel):
+    estimated_yield: float
+    confidence: float
+    risk_assessment: str
+    comparisons: list[dict]

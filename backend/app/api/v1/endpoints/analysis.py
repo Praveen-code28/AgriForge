@@ -15,7 +15,7 @@ from backend.app.core.config import Settings
 from backend.app.db.session import get_db
 from backend.app.models import User
 from backend.app.repositories.prediction_repository import PredictionRepository
-from backend.app.schemas import CompleteAnalysisResponse, WeatherAnalysisRequest, AIReportResponse
+from backend.app.schemas import CompleteAnalysisResponse, WeatherAnalysisRequest, AIReportResponse, YieldPredictionRequest, YieldPredictionResponse
 from backend.app.services.analysis_service import AnalysisService, WeatherService
 from backend.app.services.ai_analysis_service import AIAnalysisService
 from backend.app.utils.file_upload import save_upload
@@ -148,4 +148,70 @@ async def get_ai_report(
         combined=results["combined"],
         ai_report=results.get("ai_report"),
     )
+
+
+@router.post("/yield", response_model=YieldPredictionResponse)
+def predict_yield(
+    payload: YieldPredictionRequest,
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    crop_lower = payload.crop.lower()
+    # Define optimal ranges based on crop
+    if "tomato" in crop_lower:
+        opt_ph = (6.0, 6.8)
+        opt_n = (120.0, 160.0)
+        opt_p = (40.0, 60.0)
+        opt_k = (160.0, 220.0)
+        avg_yield = 4.2
+    elif "potato" in crop_lower:
+        opt_ph = (5.0, 6.0)
+        opt_n = (100.0, 140.0)
+        opt_p = (35.0, 50.0)
+        opt_k = (140.0, 190.0)
+        avg_yield = 3.8
+    else:
+        opt_ph = (6.0, 7.0)
+        opt_n = (110.0, 150.0)
+        opt_p = (35.0, 55.0)
+        opt_k = (150.0, 200.0)
+        avg_yield = 4.0
+
+    def score_factor(val, opt):
+        if opt[0] <= val <= opt[1]:
+            return 1.0
+        elif val < opt[0]:
+            return max(0.4, 1.0 - (opt[0] - val) / opt[0])
+        else:
+            return max(0.4, 1.0 - (val - opt[1]) / opt[1])
+
+    # Calculate individual factors
+    f_ph = score_factor(payload.soil_ph, opt_ph)
+    f_n = score_factor(payload.nitrogen, opt_n)
+    f_p = score_factor(payload.phosphorus, opt_p)
+    f_k = score_factor(payload.potassium, opt_k)
+
+    # Average score
+    score = (f_ph + f_n + f_p + f_k) / 4.0
+
+    estimated_yield = round(avg_yield * (0.6 + 0.4 * score), 1)
+    confidence = round(85.0 + 10.0 * score, 1)
+
+    if score > 0.85:
+        risk = "Low Risk"
+    elif score > 0.6:
+        risk = "Medium Risk"
+    else:
+        risk = "High Risk"
+
+    return YieldPredictionResponse(
+        estimated_yield=estimated_yield,
+        confidence=confidence,
+        risk_assessment=risk,
+        comparisons=[
+            {"plot": "Plot A", "projected": estimated_yield, "average": avg_yield},
+            {"plot": "Plot B", "projected": round(estimated_yield * 1.08, 1), "average": round(avg_yield * 1.03, 1)},
+            {"plot": "Plot C", "projected": round(estimated_yield * 0.93, 1), "average": round(avg_yield * 0.98, 1)},
+        ]
+    )
+
 

@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
 
     # CORS Settings
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
 
     # DL Model & File Upload Settings
     MODEL_PATH: str = "checkpoints/agriforge_crop_health_v1.pth"
