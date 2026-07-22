@@ -11,45 +11,69 @@ logger = logging.getLogger(__name__)
 @lru_cache(maxsize=1)
 def get_llm() -> Optional[LLM]:
     """
-    Returns a configured CrewAI LLM instance based on environment variables.
-    
-    The LLM provider abstraction allows switching providers (OpenAI, Anthropic, 
-    local LLMs via Ollama, NVIDIA NIM, etc.) without changing agent code.
-    
-    Returns None if initialization fails to prevent crashing the AgriForgeAgents 
-    instantiation. Downstream task execution will fail safely and fallback to 
-    deterministic results as enforced by AgriForgeCrew.
+    Create and return the CrewAI LLM used by all AgriForge agents.
+
+    Supports OpenAI-compatible API providers such as NVIDIA NIM
+    through LiteLLM.
+
+    If initialization fails, None is returned so the AgriForge
+    deterministic fallback pipeline can continue working.
     """
+
     settings = get_settings()
 
-    if not settings.LLM_API_KEY:
-        logger.warning(
-            "LLM_API_KEY not set; AI synthesis disabled. Reports will use the "
-            "deterministic fallback."
-        )
-        return None
-
-    model = settings.resolved_llm_model
-    kwargs = {
-        "model": model,
-        "api_key": settings.LLM_API_KEY,
-        "timeout": settings.LLM_TIMEOUT_SECONDS,
-        "max_tokens": settings.LLM_MAX_TOKENS,
-    }
-    if settings.LLM_BASE_URL:
-        kwargs["base_url"] = settings.LLM_BASE_URL
-
     try:
+        # NVIDIA NIM exposes an OpenAI-compatible API.
+        #
+        # LiteLLM requires the "openai/" prefix so that it knows
+        # which provider implementation should handle the model.
+        model_name = settings.LLM_MODEL
+
+        if settings.LLM_PROVIDER.lower() == "nvidia":
+            if not model_name.startswith("openai/"):
+                model_name = f"openai/{model_name}"
+
+        kwargs = {
+            "model": model_name,
+        }
+
+        if settings.LLM_API_KEY:
+            kwargs["api_key"] = settings.LLM_API_KEY
+
+        if settings.LLM_BASE_URL:
+            kwargs["base_url"] = settings.LLM_BASE_URL
+
         logger.info(
-            "Initializing LLM: model=%s base_url=%s", model, settings.LLM_BASE_URL
-        )
-        return LLM(**kwargs)
-    except Exception as e:
-        logger.error(
-            "Failed to initialize LLM (model=%s, base_url=%s): %s. "
-            "AI synthesis disabled; using deterministic fallback.",
-            model,
+            "Initializing CrewAI LLM | provider=%s | model=%s | base_url=%s",
+            settings.LLM_PROVIDER,
+            model_name,
             settings.LLM_BASE_URL,
+        )
+
+        llm = LLM(**kwargs)
+
+        logger.info("CrewAI LLM initialized successfully.")
+
+        return llm
+
+    except Exception as e:
+        logger.exception(
+            "Failed to initialize CrewAI LLM with provider '%s' "
+            "and model '%s': %s. "
+            "AI orchestration will be disabled and AgriForge "
+            "will fall back to the deterministic pipeline.",
+            settings.LLM_PROVIDER,
+            settings.LLM_MODEL,
             e,
         )
+
         return None
+
+
+def clear_llm_cache():
+    """
+    Clear cached LLM instance.
+
+    Useful when changing LLM configuration during development.
+    """
+    get_llm.cache_clear()
